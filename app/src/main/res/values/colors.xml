@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/md_cyan_700</color>
+    <color name="colorPrimaryDark">@color/md_cyan_700</color>
+    <color name="colorAccent">@color/md_red_500</color>
+</resources>

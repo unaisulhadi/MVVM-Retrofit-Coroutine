@@ -36,10 +36,6 @@ class MainActivity : AppCompatActivity() {
         rvPics.setHasFixedSize(true)
         rvPics.layoutManager = LinearLayoutManager(this)
         picsAdapter = PicsAdapter()
-        swipe.setOnRefreshListener {
-            swipe.isRefreshing = false
-            viewModel.getPictures()
-        }
     }
 
     private fun setupViewModel() {

@@ -1,10 +1,6 @@
 package com.hadi.retrofitmvvm.viewmodel
 
 import android.app.Application
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +9,7 @@ import com.hadi.retrofitmvvm.app.MyApplication
 import com.hadi.retrofitmvvm.model.PicsResponse
 import com.hadi.retrofitmvvm.repository.AppRepository
 import com.hadi.retrofitmvvm.util.Resource
+import com.hadi.retrofitmvvm.util.Utils.hasInternetConnection
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -35,7 +32,7 @@ class PicsViewModel(
     private suspend fun fetchPics() {
         picsData.postValue(Resource.Loading())
         try {
-            if(hasInternetConnection()){
+            if(hasInternetConnection(getApplication<MyApplication>())){
                 val response = appRepository.getPictures()
                 picsData.postValue(handlePicsResponse(response))
             }else{
@@ -60,7 +57,7 @@ class PicsViewModel(
 
 
     //Check Internet Connection
-    private fun hasInternetConnection(): Boolean {
+    /*private fun hasInternetConnection(): Boolean {
         val connectivityManager = getApplication<MyApplication>().getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
@@ -84,5 +81,5 @@ class PicsViewModel(
             }
         }
         return false
-    }
+    }*/
 }

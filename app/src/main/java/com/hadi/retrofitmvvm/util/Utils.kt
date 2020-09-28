@@ -7,7 +7,7 @@ import android.os.Build
 import com.hadi.retrofitmvvm.app.MyApplication
 
 object Utils {
-    private fun hasInternetConnection(application: MyApplication): Boolean {
+    fun hasInternetConnection(application: MyApplication): Boolean {
         val connectivityManager = application.getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager

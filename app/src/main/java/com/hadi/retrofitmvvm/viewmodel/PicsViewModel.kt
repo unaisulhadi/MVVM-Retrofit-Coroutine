@@ -2,6 +2,7 @@ package com.hadi.retrofitmvvm.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hadi.retrofitmvvm.R
@@ -19,7 +20,7 @@ class PicsViewModel(
     private val appRepository: AppRepository
 ) : AndroidViewModel(app) {
 
-    val picsData :MutableLiveData<Resource<PicsResponse>> = MutableLiveData()
+    val picsData: MutableLiveData<Resource<PicsResponse>> = MutableLiveData()
 
     init {
         getPictures()
@@ -29,26 +30,39 @@ class PicsViewModel(
         fetchPics()
     }
 
+
     private suspend fun fetchPics() {
         picsData.postValue(Resource.Loading())
         try {
-            if(hasInternetConnection(getApplication<MyApplication>())){
+            if (hasInternetConnection(getApplication<MyApplication>())) {
                 val response = appRepository.getPictures()
                 picsData.postValue(handlePicsResponse(response))
-            }else{
+            } else {
                 picsData.postValue(Resource.Error(getApplication<MyApplication>().getString(R.string.no_internet_connection)))
             }
-        }catch(t: Throwable) {
-            when(t) {
-                is IOException -> picsData.postValue(Resource.Error(getApplication<MyApplication>().getString(R.string.network_failure)))
-                else -> picsData.postValue(Resource.Error(getApplication<MyApplication>().getString(R.string.conversion_error)))
+        } catch (t: Throwable) {
+            when (t) {
+                is IOException -> picsData.postValue(
+                    Resource.Error(
+                        getApplication<MyApplication>().getString(
+                            R.string.network_failure
+                        )
+                    )
+                )
+                else -> picsData.postValue(
+                    Resource.Error(
+                        getApplication<MyApplication>().getString(
+                            R.string.conversion_error
+                        )
+                    )
+                )
             }
         }
     }
 
     private fun handlePicsResponse(response: Response<PicsResponse>): Resource<PicsResponse> {
-        if(response.isSuccessful){
-            response.body()?.let {resultResponse ->
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
             }
         }
@@ -56,30 +70,4 @@ class PicsViewModel(
     }
 
 
-    //Check Internet Connection
-    /*private fun hasInternetConnection(): Boolean {
-        val connectivityManager = getApplication<MyApplication>().getSystemService(
-            Context.CONNECTIVITY_SERVICE
-        ) as ConnectivityManager
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val activeNetwork = connectivityManager.activeNetwork ?: return false
-            val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-            return when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                else -> false
-            }
-        } else {
-            connectivityManager.activeNetworkInfo?.run {
-                return when(type) {
-                    ConnectivityManager.TYPE_WIFI -> true
-                    ConnectivityManager.TYPE_MOBILE -> true
-                    ConnectivityManager.TYPE_ETHERNET -> true
-                    else -> false
-                }
-            }
-        }
-        return false
-    }*/
 }
